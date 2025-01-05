@@ -1,6 +1,7 @@
 "use server";
 import { neon } from "@neondatabase/serverless";
-
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
 const sql = neon(`${process.env.DATABASE_URL}`, {
   fetchOptions: {
     timeout: 10000, // Timeout in milliseconds (10 seconds)
@@ -118,4 +119,23 @@ export async function updateInvoice(
 export async function deleteInvoice(id: string) {
   await sql(`DELETE FROM invoices WHERE id = $1`, [id]);
   revalidatePath("/dashboard/invoices");
+}
+
+export async function authenticate(
+  prevState: string | undefined,
+  formData: FormData,
+) {
+  try {
+    await signIn('credentials', formData);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'Invalid credentials.';
+        default:
+          return 'Something went wrong.';
+      }
+    }
+    throw error;
+  }
 }

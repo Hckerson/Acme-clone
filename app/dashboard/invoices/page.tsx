@@ -1,3 +1,8 @@
+import { Metadata } from 'next';
+ 
+export const metadata: Metadata = {
+  title: 'Invoices ',
+};
 import Pagination from '@/app/ui/invoices/pagination';
 import { fetchInvoicesPages } from '@/app/lib/data';
 import Search from '@/app/ui/search';
