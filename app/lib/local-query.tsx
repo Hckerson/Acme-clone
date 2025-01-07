@@ -21,7 +21,7 @@ export interface Mers{
 export async function query(){
   try {
     const response = await pool.query('SELECT * FROM customers')
-    const insertedUsers = await Promise.all(
+    await Promise.all(
       users.map(async (user) => {
         const hashedPassword = await bcrypt.hash(user.password, 10);
         return pool.query(`
@@ -60,7 +60,7 @@ export async function seedUsers() {
     );
   `);
 
-  const insertedInvoices = await Promise.all(
+  await Promise.all(
     invoices.map(
       (invoice) => pool.query(`
         INSERT INTO invoices (customer_id, amount, status, date)
